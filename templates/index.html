@@ -4,166 +4,174 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Notes to Study Kit</title>
+<script>
+  // Apply a saved theme before first paint to avoid a flash. Storage can be blocked, so never rely on it.
+  (function () {
+    try {
+      var t = localStorage.getItem('stk-theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
 <style>
   :root {
-    --paper: #fffdf6; --rule: #dbe8f7; --margin: #f6b3b3;
-    --ink: #26324a; --muted: #6a7691;
-    --card: #ffffff; --line: #e6e1d3;
-    --blue: #3b82f6; --blue-soft: #e7f0ff;
-    --yellow: #ffe58a; --yellow-soft: #fff6cc;
-    --green: #1f9d63; --green-soft: #e3f6ec;
-    --red: #d9453b; --red-soft: #fde9e7;
-    --purple: #7c5cff; --purple-soft: #eeeaff;
-    --shadow: 0 2px 0 rgba(38,50,74,.08), 0 8px 20px rgba(38,50,74,.06);
+    color-scheme: light;
+    --bg: #fafaf9; --surface: #ffffff; --subtle: #f4f4f2;
+    --ink: #18181b; --muted: #6b6b73; --border: #e4e4e0;
+    --accent: #3451d1; --accent-ink: #ffffff; --accent-soft: #eef1fd;
+    --good: #15803d; --good-soft: #ecf8f0; --bad: #b42318; --bad-soft: #fdf0ee;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #171a24; --rule: #212638; --margin: #5a2f3a;
-      --ink: #e8ebf5; --muted: #98a2bd;
-      --card: #1f2331; --line: #2d3348;
-      --blue: #6ea0ff; --blue-soft: #1d2a4a;
-      --yellow: #6b5a14; --yellow-soft: #2d2915;
-      --green: #4cd28f; --green-soft: #15332a;
-      --red: #ff8a80; --red-soft: #3a1c1c;
-      --purple: #a493ff; --purple-soft: #2a2548;
-      --shadow: 0 2px 0 rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.25);
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0c0c0d; --surface: #131315; --subtle: #1a1a1d;
+      --ink: #ececef; --muted: #9a9aa3; --border: #2a2a2f;
+      --accent: #8ea2ff; --accent-ink: #0c0c0d; --accent-soft: #1b2036;
+      --good: #5ccf8b; --good-soft: #12261b; --bad: #ff8f84; --bad-soft: #2b1715;
     }
   }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0c0c0d; --surface: #131315; --subtle: #1a1a1d;
+    --ink: #ececef; --muted: #9a9aa3; --border: #2a2a2f;
+    --accent: #8ea2ff; --accent-ink: #0c0c0d; --accent-soft: #1b2036;
+    --good: #5ccf8b; --good-soft: #12261b; --bad: #ff8f84; --bad-soft: #2b1715;
+  }
+ 
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    margin: 0; color: var(--ink);
-    font: 16px/1.6 ui-rounded, "Nunito", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-    background-color: var(--paper);
-    background-image:
-      linear-gradient(90deg, transparent 47px, var(--margin) 47px, var(--margin) 49px, transparent 49px),
-      repeating-linear-gradient(transparent 0, transparent 31px, var(--rule) 31px, var(--rule) 32px);
-    background-attachment: local;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.65 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 780px; margin: 0 auto; padding: 28px 16px 64px 16px; }
-  @media (min-width: 900px) { main { padding-left: 24px; } }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 20px 72px; }
+  .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; }
  
-  header { text-align: center; margin-bottom: 22px; }
-  .logo { font-size: 2.4rem; line-height: 1; }
-  h1 { font-size: 2rem; margin: 6px 0 4px; letter-spacing: -.5px; }
-  .hl { background: linear-gradient(transparent 55%, var(--yellow) 55%); padding: 0 6px; border-radius: 4px; }
-  .sub { color: var(--muted); margin: 0; }
+  /* Header */
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 44px; }
+  .brand { font-size: .85rem; color: var(--muted); letter-spacing: .02em; }
+  .theme { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .theme button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 5px 11px; font-size: .78rem; font-weight: 500; }
+  .theme button + button { border-left: 1px solid var(--border); }
+  .theme button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  h1 { font-size: 2.1rem; line-height: 1.15; letter-spacing: -.03em; margin: 0 0 10px; font-weight: 650; }
+  .lede { color: var(--muted); margin: 0 0 36px; max-width: 52ch; }
  
-  .card {
-    background: var(--card); border: 2px solid var(--line); border-radius: 18px;
-    padding: 18px; margin-bottom: 18px; box-shadow: var(--shadow);
-  }
-  .step { display: flex; align-items: center; gap: 10px; font-weight: 700; margin-bottom: 10px; }
-  .step b { background: var(--blue); color: #fff; width: 26px; height: 26px; border-radius: 50%;
-            display: inline-grid; place-items: center; font-size: .85rem; }
+  /* Sections */
+  .panel { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 22px; margin-bottom: 24px; }
+  .label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .09em; margin: 0 0 12px; }
+  .label + .label, .row + .label { margin-top: 24px; }
  
   .drop {
-    border: 3px dashed var(--blue); background: var(--blue-soft); border-radius: 16px;
-    padding: 30px 16px; text-align: center; color: var(--ink); cursor: pointer;
-    transition: transform .12s, background .12s;
+    border: 1px dashed var(--border); background: var(--subtle); border-radius: 10px;
+    padding: 28px 16px; text-align: center; color: var(--muted); cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
   }
-  .drop:hover, .drop.over { transform: translateY(-2px); background: var(--purple-soft); border-color: var(--purple); }
-  .drop .big { font-size: 2.2rem; display: block; }
-  .drop small { color: var(--muted); }
+  .drop strong { color: var(--ink); font-weight: 600; }
+  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+  .drop small { display: block; margin-top: 4px; font-size: .82rem; }
   .thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-  .thumb { position: relative; }
-  .thumb img { width: 86px; height: 86px; object-fit: cover; border-radius: 12px; border: 2px solid var(--line);
-               transform: rotate(-2deg); box-shadow: var(--shadow); display: block; }
-  .thumb:nth-child(even) img { transform: rotate(2deg); }
-  .thumb button { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; padding: 0; border-radius: 50%;
-                  background: var(--red); color: #fff; border: 2px solid var(--card); font-size: .8rem; line-height: 1; }
+  .thumb { width: 84px; }
+  .thumb img { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
+  .thumb button { margin-top: 4px; width: 100%; padding: 2px 0; font-size: .74rem; color: var(--muted); border: 0; background: transparent; }
+  .thumb button:hover { color: var(--bad); text-decoration: underline; }
  
-  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
-  label { display: flex; flex-direction: column; font-size: .8rem; font-weight: 700; color: var(--muted); gap: 4px; text-transform: uppercase; letter-spacing: .4px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+  label { display: flex; flex-direction: column; gap: 6px; font-size: .8rem; color: var(--muted); }
   select, input[type=number] {
-    font: inherit; font-weight: 600; text-transform: none; letter-spacing: 0; padding: 10px 12px; border-radius: 12px;
-    border: 2px solid var(--line); background: var(--card); color: var(--ink); width: 100%;
+    font: inherit; font-size: .95rem; color: var(--ink); background: var(--surface); width: 100%;
+    padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px;
   }
-  select:focus, input:focus, button:focus-visible, .drop:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+  select:hover, input:hover { border-color: var(--muted); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: .85rem; margin: 12px 0 0; }
  
-  button { font: inherit; font-weight: 700; cursor: pointer; border-radius: 12px; border: 2px solid var(--line);
-           background: var(--card); color: var(--ink); padding: 10px 16px; transition: transform .1s; }
-  button:hover:not(:disabled) { transform: translateY(-1px); }
-  button.primary {
-    width: 100%; margin-top: 16px; padding: 14px; font-size: 1.05rem; color: #fff; border: 0;
-    background: linear-gradient(135deg, var(--blue), var(--purple)); box-shadow: 0 4px 0 rgba(38,50,74,.25);
-  }
-  button.primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(38,50,74,.25); }
-  button:disabled { opacity: .5; cursor: not-allowed; }
-  .err { color: var(--red); background: var(--red-soft); border: 2px solid var(--red); border-radius: 12px;
-         padding: 10px 12px; margin-top: 14px; display: none; font-weight: 600; }
-  .hint { color: var(--muted); font-size: .85rem; margin: 10px 0 0; }
+  button { font: inherit; font-weight: 500; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);
+           background: var(--surface); color: var(--ink); padding: 9px 15px; transition: background .12s, border-color .12s, opacity .12s; }
+  button:hover:not(:disabled) { border-color: var(--muted); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { width: 100%; margin-top: 22px; padding: 12px; font-size: 1rem; background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button.primary:hover:not(:disabled) { opacity: .9; }
+  .err { display: none; margin-top: 14px; padding: 10px 12px; border-radius: 8px; color: var(--bad); background: var(--bad-soft); border: 1px solid var(--bad); font-size: .92rem; }
  
-  .result-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-  .result-head h2 { margin: 0; font-size: 1.5rem; }
-  .chip { background: var(--purple-soft); color: var(--purple); border-radius: 999px; padding: 3px 12px; font-size: .78rem; font-weight: 700; }
+  /* Results */
+  .result-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .result-head h2 { margin: 0; font-size: 1.45rem; letter-spacing: -.02em; font-weight: 650; }
+  .chip { font-size: .72rem; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; }
  
-  .tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-  .tabs button { border-radius: 999px; }
-  .tabs button[aria-selected=true] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+  .tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .tabs button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 8px 0; margin-bottom: -1px; border-bottom: 2px solid transparent; }
+  .tabs button:hover:not(:disabled) { color: var(--ink); }
+  .tabs button[aria-selected=true] { color: var(--ink); border-bottom-color: var(--accent); }
  
   .hidden { display: none !important; }
-  ul.bullets { padding-left: 0; margin: 0; list-style: none; }
-  ul.bullets li { background: var(--yellow-soft); border-left: 6px solid var(--yellow); border-radius: 10px;
-                  padding: 8px 12px; margin-bottom: 8px; }
-  h3 { margin: 20px 0 8px; font-size: 1.05rem; }
-  .terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-  .term { background: var(--green-soft); border-radius: 12px; padding: 10px 12px; }
-  .term b { color: var(--green); display: block; }
-  .term span { color: var(--ink); font-size: .93rem; }
+  ul.bullets { margin: 0; padding: 0; list-style: none; }
+  ul.bullets li { position: relative; padding: 0 0 0 20px; margin-bottom: 10px; }
+  ul.bullets li::before { content: ""; position: absolute; left: 3px; top: .72em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  h3 { margin: 28px 0 10px; }
+  .terms { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .term { border: 1px solid var(--border); background: var(--subtle); border-radius: 10px; padding: 12px 14px; }
+  .term b { display: block; font-weight: 600; margin-bottom: 2px; }
+  .term span { color: var(--muted); font-size: .92rem; }
  
-  .flash { perspective: 1000px; height: 210px; cursor: pointer; margin-bottom: 14px; }
-  .flash-inner { position: relative; width: 100%; height: 100%; transition: transform .5s; transform-style: preserve-3d; }
+  .flash { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 16px; }
+  .flash-inner { position: relative; width: 100%; height: 100%; transition: transform .45s; transform-style: preserve-3d; }
   .flash.flipped .flash-inner { transform: rotateY(180deg); }
-  .face { position: absolute; inset: 0; backface-visibility: hidden; border: 2px solid var(--line); border-radius: 18px;
-          display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 22px; text-align: center;
-          background: var(--card); box-shadow: var(--shadow); font-size: 1.15rem; font-weight: 600; }
-  .face small { position: absolute; top: 12px; left: 16px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; font-size: .7rem; }
-  .face.front { background: var(--blue-soft); }
-  .face.back { transform: rotateY(180deg); background: var(--green-soft); }
-  .nav { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-weight: 700; }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+          display: flex; align-items: center; justify-content: center; padding: 28px; text-align: center; font-size: 1.15rem; font-weight: 500; }
+  .face small { position: absolute; top: 14px; left: 16px; color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .09em; font-weight: 500; }
+  .face.back { transform: rotateY(180deg); background: var(--accent-soft); border-color: var(--accent); }
+  .nav { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: .9rem; }
  
-  .bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 6px 0 4px; }
-  .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--green), var(--blue)); transition: width .3s; }
-  .score { font-size: 1.15rem; font-weight: 800; margin: 0; }
-  .q { margin-top: 20px; }
-  .q strong { display: block; margin-bottom: 4px; }
-  .opt { display: block; width: 100%; text-align: left; margin: 8px 0; }
-  .opt.correct { background: var(--green-soft); border-color: var(--green); color: var(--green); }
-  .opt.wrong { background: var(--red-soft); border-color: var(--red); color: var(--red); }
-  .expl { color: var(--muted); margin-top: 4px; font-size: .93rem; }
-  .final { background: var(--yellow-soft); border: 2px solid var(--yellow); border-radius: 14px; padding: 12px 14px; margin-top: 18px; font-weight: 700; display: none; }
+  .score { margin: 0; font-weight: 600; }
+  .bar { height: 3px; background: var(--border); border-radius: 999px; overflow: hidden; margin: 10px 0 6px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .q { margin-top: 26px; }
+  .q strong { display: block; margin-bottom: 8px; font-weight: 600; }
+  .opt { display: block; width: 100%; text-align: left; margin: 8px 0; font-weight: 400; }
+  .opt.correct { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+  .opt.wrong { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+  .expl { color: var(--muted); margin-top: 6px; font-size: .92rem; }
+  .final { display: none; margin-top: 24px; padding: 12px 14px; border: 1px solid var(--border); background: var(--subtle); border-radius: 10px; font-weight: 500; }
  
-  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 28px; }
-  .spin { display: inline-block; width: 14px; height: 14px; border: 3px solid currentColor; border-right-color: transparent;
+  footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: .8rem; }
+  .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid currentColor; border-right-color: transparent;
           border-radius: 50%; animation: s .7s linear infinite; vertical-align: -2px; margin-right: 8px; }
   @keyframes s { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation-duration: 1.5s !important; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .spin { animation-duration: 2s; } }
+  @media (max-width: 520px) { h1 { font-size: 1.7rem; } main { padding-top: 20px; } .topbar { margin-bottom: 30px; } }
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <div class="logo" aria-hidden="true">📚</div>
-    <h1>Notes to <span class="hl">Study Kit</span></h1>
-    <p class="sub">Snap your notes. Get a summary, flashcards and a quiz in seconds.</p>
-  </header>
+  <div class="topbar">
+    <span class="brand mono">notes-to-study-kit</span>
+    <div class="theme" role="group" aria-label="Colour theme">
+      <button type="button" data-theme-set="system" aria-pressed="true">System</button>
+      <button type="button" data-theme-set="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
  
-  <section class="card">
-    <div class="step"><b>1</b> Add photos of your notes</div>
+  <h1>Turn your notes into a study kit.</h1>
+  <p class="lede">Upload photos of your notes. Get a summary, flashcards and a quiz, in English, Hindi or Marathi.</p>
+ 
+  <section class="panel">
+    <p class="label mono">01 / Upload</p>
     <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose or drop photos of your notes">
-      <span class="big" aria-hidden="true">📸</span>
-      <strong>Tap to pick photos</strong> or drop them here<br>
+      <strong>Choose photos</strong> or drop them here
       <small>Up to 4 images, 6 MB each. Clear, well-lit photos work best.</small>
     </div>
     <input id="file" type="file" accept="image/*" multiple class="hidden">
     <div class="thumbs" id="thumbs"></div>
  
-    <div class="step" style="margin-top:18px"><b>2</b> Pick your settings</div>
+    <p class="label mono" style="margin-top:26px">02 / Settings</p>
     <div class="row">
       <label>Language
         <select id="language"><option>English</option><option>Hindi</option><option>Marathi</option></select>
       </label>
-      <label>AI model
+      <label>Model
         <select id="model">
           {% for mid, label in models.items() %}
           <option value="{{ mid }}" {% if mid == model %}selected{% endif %}>{{ label }}</option>
@@ -177,44 +185,44 @@
         <input id="quiz" type="number" min="3" max="10" value="5">
       </label>
     </div>
-    <p class="hint">Fast is great for most pages. Pick Best quality for messy handwriting or dense pages (a bit slower).</p>
+    <p class="hint">Fast suits most pages. Choose Best quality for messy handwriting or dense pages. It is a little slower.</p>
  
-    <button class="primary" id="go" disabled>✨ Make my study kit</button>
+    <button class="primary" id="go" disabled>Generate study kit</button>
     <div class="err" id="err" role="alert"></div>
   </section>
  
   <section id="result" class="hidden" aria-live="polite">
     <div class="result-head">
       <h2 id="title"></h2>
-      <span class="chip" id="usedModel"></span>
+      <span class="chip mono" id="usedModel"></span>
     </div>
     <div class="tabs" role="tablist">
-      <button role="tab" aria-selected="true" data-tab="summary">📝 Summary</button>
-      <button role="tab" aria-selected="false" data-tab="cards">🃏 Flashcards</button>
-      <button role="tab" aria-selected="false" data-tab="quiz">🎯 Quiz</button>
+      <button role="tab" aria-selected="true" data-tab="summary">Summary</button>
+      <button role="tab" aria-selected="false" data-tab="cards">Flashcards</button>
+      <button role="tab" aria-selected="false" data-tab="quiz">Quiz</button>
     </div>
  
-    <div class="card" id="tab-summary">
+    <div id="tab-summary">
       <ul class="bullets" id="bullets"></ul>
-      <h3 id="termsHead">Key terms</h3>
+      <h3 class="label mono" id="termsHead">Key terms</h3>
       <div class="terms" id="terms"></div>
     </div>
  
     <div id="tab-cards" class="hidden">
       <div class="flash" id="flash" tabindex="0" role="button" aria-label="Flip flashcard"><div class="flash-inner">
-        <div class="face front"><small>Question</small><span id="fq"></span></div>
-        <div class="face back"><small>Answer</small><span id="fa"></span></div>
+        <div class="face front"><small class="mono">Question</small><span id="fq"></span></div>
+        <div class="face back"><small class="mono">Answer</small><span id="fa"></span></div>
       </div></div>
       <div class="nav">
-        <button id="prev">← Prev</button><span id="fcount"></span><button id="next">Next →</button>
+        <button id="prev">Previous</button><span id="fcount" class="mono"></span><button id="next">Next</button>
       </div>
-      <p class="hint" style="text-align:center">Tap the card to flip it.</p>
+      <p class="hint" style="text-align:center">Click the card to flip it.</p>
     </div>
  
-    <div class="card hidden" id="tab-quiz"></div>
+    <div class="hidden" id="tab-quiz"></div>
   </section>
  
-  <footer>Powered by Gemma 4 (open weights) through the Gemini API. Photos are sent to the model to make your kit and are not stored by this app. AI can make mistakes, so double-check important facts.</footer>
+  <footer>Built with Gemma 4 (open weights) through the Gemini API. Photos are sent to the model to generate your kit and are not stored by this app. AI can make mistakes, so check important facts against your textbook.</footer>
 </main>
  
 <script>
@@ -224,7 +232,25 @@ let files = [];
 let kit = null;
 let cardIdx = 0;
  
-// Remember the model choice between visits (storage can be blocked, so never rely on it).
+/* Theme: System (follow OS), Light, Dark. Choice is saved when storage is available. */
+function currentTheme() {
+  const t = document.documentElement.getAttribute('data-theme');
+  return t === 'light' || t === 'dark' ? t : 'system';
+}
+function syncThemeButtons() {
+  const cur = currentTheme();
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === cur)));
+}
+document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => {
+  const v = b.dataset.themeSet;
+  if (v === 'system') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', v);
+  try { v === 'system' ? localStorage.removeItem('stk-theme') : localStorage.setItem('stk-theme', v); } catch (e) {}
+  syncThemeButtons();
+}));
+syncThemeButtons();
+ 
+/* Remember the model choice between visits. */
 try {
   const saved = localStorage.getItem('stk-model');
   if (saved && MODEL_NAMES[saved]) $('model').value = saved;
@@ -249,7 +275,7 @@ function renderThumbs() {
     const wrap = document.createElement('div'); wrap.className = 'thumb';
     const img = document.createElement('img');
     img.src = URL.createObjectURL(f); img.alt = 'Note photo ' + (i + 1);
-    const x = document.createElement('button'); x.textContent = '✕'; x.setAttribute('aria-label', 'Remove photo ' + (i + 1));
+    const x = document.createElement('button'); x.type = 'button'; x.textContent = 'Remove'; x.setAttribute('aria-label', 'Remove photo ' + (i + 1));
     x.onclick = () => { files.splice(i, 1); renderThumbs(); };
     wrap.append(img, x); t.appendChild(wrap);
   });
@@ -260,7 +286,7 @@ function showErr(msg) { const e = $('err'); e.textContent = msg; e.style.display
 $('go').addEventListener('click', async () => {
   showErr('');
   const btn = $('go');
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Reading your notes...';
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Reading your notes';
   const fd = new FormData();
   files.forEach(f => fd.append('images', f));
   fd.append('language', $('language').value);
@@ -272,10 +298,10 @@ $('go').addEventListener('click', async () => {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
     kit = data.kit;
-    $('usedModel').textContent = MODEL_NAMES[data.model] || data.model;
+    $('usedModel').textContent = data.model;
     render();
   } catch (e) { showErr(e.message); }
-  finally { btn.disabled = files.length === 0; btn.textContent = '✨ Make my study kit'; }
+  finally { btn.disabled = files.length === 0; btn.textContent = 'Generate study kit'; }
 });
  
 function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
@@ -323,7 +349,7 @@ function renderQuiz() {
   const total = kit.quiz.length;
   if (!total) { root.textContent = 'No quiz generated.'; return; }
   let score = 0, answered = 0;
-  const scoreEl = el('p', 'Score: 0 / ' + total, 'score');
+  const scoreEl = el('p', 'Score: 0 / ' + total, 'score mono');
   const bar = el('div', undefined, 'bar'); const fill = document.createElement('i'); bar.appendChild(fill);
   const final = el('div', undefined, 'final');
   root.append(scoreEl, bar);
@@ -337,12 +363,12 @@ function renderQuiz() {
         btns.forEach((x, xi) => { x.disabled = true; if (xi === q.answer_index) x.classList.add('correct'); });
         if (oi === q.answer_index) score++; else bt.classList.add('wrong');
         answered++;
-        expl.textContent = (oi === q.answer_index ? '✅ ' : '❌ ') + (q.explanation || '');
+        expl.textContent = (oi === q.answer_index ? 'Correct. ' : 'Not quite. ') + (q.explanation || '');
         scoreEl.textContent = 'Score: ' + score + ' / ' + total;
         fill.style.width = (answered / total * 100) + '%';
         if (answered === total) {
           const pct = Math.round(score / total * 100);
-          final.textContent = pct >= 80 ? '🎉 Great job! You nailed it.' : pct >= 50 ? '👍 Good start. Review the flashcards and try again.' : '📖 Keep going. Go through the summary and flashcards, then retry.';
+          final.textContent = pct >= 80 ? 'Strong result. You know this material well.' : pct >= 50 ? 'Good start. Review the flashcards and try again.' : 'Go through the summary and flashcards, then retry the quiz.';
           final.style.display = 'block';
         }
       });

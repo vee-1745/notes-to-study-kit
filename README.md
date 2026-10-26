@@ -1,8 +1,9 @@
-# Notes to Study Kit
+# StudyLens: Notes to Study Kit
  
 Upload photos of your handwritten notes or a textbook page. Get back a summary, key terms, flashcards and an interactive quiz, in English, Hindi or Marathi.
  
 **Live demo:** https://notes-to-study-kit.onrender.com/
+**Recording:** https://drive.google.com/drive/folders/1YyzhiPwTskubGrTSP_SS-op8aK4WeyAW?usp=drive_link
  
 Built for the **Hacktoberfest 2026 Hack Day (Amaravati x AIBPT Club, VIT-AP)**.
  

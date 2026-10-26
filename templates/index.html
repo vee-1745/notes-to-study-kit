@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notes to Study Kit</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #ffffff; --ink: #1d1d1b; --muted: #6b6a65;
+    --line: #e2e0d8; --accent: #1f6feb; --accent-ink: #ffffff;
+    --good: #1a7f4b; --bad: #b42318; --good-bg: #e7f5ec; --bad-bg: #fdecea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212; --card: #1c1c1b; --ink: #ecebe6; --muted: #9b9a94;
+      --line: #2f2f2c; --accent: #4c8dff; --accent-ink: #0b0b0b;
+      --good: #5fd092; --bad: #ff8a80; --good-bg: #12301f; --bad-bg: #3a1714;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+  .drop { border: 2px dashed var(--line); border-radius: 12px; padding: 28px 16px; text-align: center;
+          color: var(--muted); cursor: pointer; transition: border-color .15s, background .15s; }
+  .drop.over, .drop:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .thumbs img { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; align-items: end; }
+  label { display: flex; flex-direction: column; font-size: .85rem; color: var(--muted); gap: 4px; }
+  select, input[type=number] { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+                               background: var(--card); color: var(--ink); min-width: 110px; }
+  button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line);
+           background: var(--card); color: var(--ink); padding: 10px 16px; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  .err { color: var(--bad); background: var(--bad-bg); border-radius: 8px; padding: 10px 12px; margin-top: 12px; display: none; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tabs button[aria-selected=true] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .hidden { display: none !important; }
+  ul.bullets { padding-left: 20px; margin: 0; }
+  ul.bullets li { margin-bottom: 6px; }
+  dl { margin: 18px 0 0; }
+  dt { font-weight: 600; margin-top: 10px; }
+  dd { margin: 2px 0 0; color: var(--muted); }
+  .flash { perspective: 900px; height: 190px; cursor: pointer; margin-bottom: 12px; }
+  .flash-inner { position: relative; width: 100%; height: 100%; transition: transform .45s; transform-style: preserve-3d; }
+  .flash.flipped .flash-inner { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; border: 1px solid var(--line); border-radius: 14px;
+          display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; background: var(--card); }
+  .face.back { transform: rotateY(180deg); background: color-mix(in srgb, var(--accent) 8%, var(--card)); }
+  .nav { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
+  .opt { display: block; width: 100%; text-align: left; margin: 8px 0; }
+  .opt.correct { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+  .opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+  .expl { color: var(--muted); margin-top: 8px; }
+  .score { font-size: 1.2rem; font-weight: 600; }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 28px; }
+  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent;
+          border-radius: 50%; animation: s .7s linear infinite; vertical-align: -2px; margin-right: 8px; }
+  @keyframes s { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Notes to Study Kit</h1>
+  <p class="sub">Snap a photo of your notes. Get a summary, flashcards and a quiz. Powered by Gemma 4.</p>
+
+  <section class="card">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose or drop photos of your notes">
+      Tap to choose photos, or drop them here<br><small>Up to 4 images, 6 MB each (JPG, PNG, WebP)</small>
+    </div>
+    <input id="file" type="file" accept="image/*" multiple class="hidden">
+    <div class="thumbs" id="thumbs"></div>
+
+    <div class="row">
+      <label>Language
+        <select id="language"><option>English</option><option>Hindi</option><option>Marathi</option></select>
+      </label>
+      <label>Flashcards
+        <input id="cards" type="number" min="3" max="15" value="8">
+      </label>
+      <label>Quiz questions
+        <input id="quiz" type="number" min="3" max="10" value="5">
+      </label>
+      <button class="primary" id="go" disabled>Make my study kit</button>
+    </div>
+    <div class="err" id="err" role="alert"></div>
+  </section>
+
+  <section id="result" class="hidden">
+    <h2 id="title" style="margin:0 0 12px"></h2>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="summary">Summary</button>
+      <button role="tab" aria-selected="false" data-tab="cards">Flashcards</button>
+      <button role="tab" aria-selected="false" data-tab="quiz">Quiz</button>
+    </div>
+
+    <div class="card" id="tab-summary">
+      <ul class="bullets" id="bullets"></ul>
+      <dl id="terms"></dl>
+    </div>
+
+    <div id="tab-cards" class="hidden">
+      <div class="flash" id="flash"><div class="flash-inner">
+        <div class="face front" id="fq"></div><div class="face back" id="fa"></div>
+      </div></div>
+      <div class="nav">
+        <button id="prev">Prev</button><span id="fcount"></span><button id="next">Next</button>
+      </div>
+      <p class="sub" style="text-align:center;margin-top:10px">Tap the card to flip it.</p>
+    </div>
+
+    <div class="card hidden" id="tab-quiz"></div>
+  </section>
+
+  <footer>Model: <code>{{ model }}</code> via Gemini API. Your photos are sent to the model to generate the kit and are not stored by this app.</footer>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let files = [];
+let kit = null;
+let cardIdx = 0;
+
+const drop = $('drop'), input = $('file');
+drop.addEventListener('click', () => input.click());
+drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+input.addEventListener('change', () => addFiles(input.files));
+
+function addFiles(list) {
+  for (const f of list) if (f.type.startsWith('image/') && files.length < 4) files.push(f);
+  renderThumbs();
+}
+function renderThumbs() {
+  const t = $('thumbs'); t.innerHTML = '';
+  files.forEach((f, i) => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f); img.alt = 'Note photo ' + (i + 1); img.title = 'Click to remove';
+    img.style.cursor = 'pointer';
+    img.onclick = () => { files.splice(i, 1); renderThumbs(); };
+    t.appendChild(img);
+  });
+  $('go').disabled = files.length === 0;
+}
+function showErr(msg) { const e = $('err'); e.textContent = msg; e.style.display = msg ? 'block' : 'none'; }
+
+$('go').addEventListener('click', async () => {
+  showErr('');
+  const btn = $('go');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Reading your notes...';
+  const fd = new FormData();
+  files.forEach(f => fd.append('images', f));
+  fd.append('language', $('language').value);
+  fd.append('cards', $('cards').value);
+  fd.append('quiz', $('quiz').value);
+  try {
+    const res = await fetch('/api/generate', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Something went wrong');
+    kit = data.kit; render();
+  } catch (e) { showErr(e.message); }
+  finally { btn.disabled = files.length === 0; btn.textContent = 'Make my study kit'; }
+});
+
+function text(el, s) { el.textContent = s; return el; }
+
+function render() {
+  $('result').classList.remove('hidden');
+  $('title').textContent = kit.title;
+  const b = $('bullets'); b.innerHTML = '';
+  kit.summary.forEach(s => b.appendChild(text(document.createElement('li'), s)));
+  const d = $('terms'); d.innerHTML = '';
+  kit.key_terms.forEach(t => {
+    d.appendChild(text(document.createElement('dt'), t.term));
+    d.appendChild(text(document.createElement('dd'), t.definition));
+  });
+  cardIdx = 0; renderCard(); renderQuiz(); setTab('summary');
+  $('result').scrollIntoView({ behavior: 'smooth' });
+}
+
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+function setTab(name) {
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name));
+  $('tab-summary').classList.toggle('hidden', name !== 'summary');
+  $('tab-cards').classList.toggle('hidden', name !== 'cards');
+  $('tab-quiz').classList.toggle('hidden', name !== 'quiz');
+}
+
+function renderCard() {
+  const n = kit.flashcards.length;
+  $('flash').classList.remove('flipped');
+  if (!n) { $('fq').textContent = 'No flashcards generated.'; $('fa').textContent = ''; $('fcount').textContent = ''; return; }
+  $('fq').textContent = kit.flashcards[cardIdx].q;
+  $('fa').textContent = kit.flashcards[cardIdx].a;
+  $('fcount').textContent = (cardIdx + 1) + ' / ' + n;
+}
+$('flash').addEventListener('click', () => $('flash').classList.toggle('flipped'));
+$('prev').addEventListener('click', () => { if (kit.flashcards.length) { cardIdx = (cardIdx - 1 + kit.flashcards.length) % kit.flashcards.length; renderCard(); } });
+$('next').addEventListener('click', () => { if (kit.flashcards.length) { cardIdx = (cardIdx + 1) % kit.flashcards.length; renderCard(); } });
+
+function renderQuiz() {
+  const root = $('tab-quiz'); root.innerHTML = '';
+  if (!kit.quiz.length) { root.textContent = 'No quiz generated.'; return; }
+  let score = 0, answered = 0;
+  const scoreEl = document.createElement('p'); scoreEl.className = 'score'; scoreEl.textContent = 'Score: 0 / ' + kit.quiz.length;
+  root.appendChild(scoreEl);
+  kit.quiz.forEach((q, qi) => {
+    const box = document.createElement('div'); box.style.marginTop = '18px';
+    const h = document.createElement('strong'); h.textContent = (qi + 1) + '. ' + q.question; box.appendChild(h);
+    const expl = document.createElement('div'); expl.className = 'expl';
+    const btns = q.options.map((o, oi) => {
+      const bt = document.createElement('button'); bt.className = 'opt'; bt.textContent = o;
+      bt.addEventListener('click', () => {
+        btns.forEach((x, xi) => { x.disabled = true; if (xi === q.answer_index) x.classList.add('correct'); });
+        if (oi === q.answer_index) score++; else bt.classList.add('wrong');
+        answered++; expl.textContent = q.explanation || '';
+        scoreEl.textContent = 'Score: ' + score + ' / ' + kit.quiz.length + (answered === kit.quiz.length ? ' (done)' : '');
+      });
+      box.appendChild(bt); return bt;
+    });
+    box.appendChild(expl); root.appendChild(box);
+  });
+}
+</script>
+</body>
+</html>
